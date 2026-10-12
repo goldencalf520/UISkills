@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub UI Skill 清单 · 按分类 · 按 Star 排序</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --panel-2:#fbfcfd; --line:#e5e8ec;
+    --text:#1b1f24; --text-2:#5b646e; --text-3:#8b949e;
+    --accent:#2f6fed; --accent-soft:#eef4ff;
+    --star:#e8a33d; --warn:#c2410c; --warn-soft:#fff5ed;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Segoe UI,sans-serif;
+    font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:40px 24px 80px;}
+
+  header.top{margin-bottom:28px;}
+  h1{font-size:26px; margin:0 0 10px; letter-spacing:-.3px; font-weight:650;}
+  .sub{color:var(--text-2); font-size:13.5px; margin:0;}
+  .sub code{background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:1px 5px; font-size:12.5px;}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:22px 0 26px;}
+  .stat{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;}
+  .stat .k{font-size:12px; color:var(--text-3); margin-bottom:4px;}
+  .stat .v{font-size:22px; font-weight:660; letter-spacing:-.4px;}
+
+  .toolbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px; margin-bottom:18px; position:sticky; top:0; z-index:20;
+  }
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; flex:1;}
+  .tab{
+    border:1px solid var(--line); background:var(--panel-2); color:var(--text-2);
+    padding:6px 13px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:520;
+    transition:.15s; font-family:inherit;
+  }
+  .tab:hover{border-color:#cfd6dd; color:var(--text);}
+  .tab.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .tab .n{opacity:.65; font-size:11.5px; margin-left:5px;}
+  .search{
+    border:1px solid var(--line); border-radius:8px; padding:7px 11px; font-size:13px;
+    width:190px; font-family:inherit; background:var(--panel-2); color:var(--text);
+  }
+  .search:focus{outline:none; border-color:var(--accent); background:#fff;}
+
+  section.cat{margin-bottom:34px;}
+  .cat-head{display:flex; align-items:baseline; gap:10px; margin:0 0 4px;}
+  .cat-head h2{font-size:17px; margin:0; font-weight:640; letter-spacing:-.2px;}
+  .cat-head .cnt{font-size:12.5px; color:var(--text-3);}
+  .cat-note{color:var(--text-2); font-size:12.5px; margin:0 0 12px;}
+
+  table{width:100%; border-collapse:separate; border-spacing:0; background:var(--panel);
+    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  thead th{
+    text-align:left; font-size:11.5px; font-weight:600; color:var(--text-3);
+    text-transform:uppercase; letter-spacing:.5px; padding:10px 14px;
+    background:var(--panel-2); border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  thead th.sortable{cursor:pointer; user-select:none;}
+  thead th.sortable:hover{color:var(--accent);}
+  tbody td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafbfc;}
+
+  .rank{color:var(--text-3); font-variant-numeric:tabular-nums; font-size:12.5px; width:34px;}
+  .repo{font-weight:600; color:var(--accent); text-decoration:none; font-size:13.5px; word-break:break-all;}
+  .repo:hover{text-decoration:underline;}
+  .owner{color:var(--text-3); font-weight:400;}
+  .stars{font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; color:var(--text);}
+  .stars .ic{color:var(--star); margin-right:3px;}
+  .date{color:var(--text-3); font-size:12.5px; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .desc{color:var(--text-2); font-size:13px; min-width:280px;}
+  .old{display:inline-block; margin-left:6px; font-size:11px; color:var(--warn);
+    background:var(--warn-soft); border:1px solid #fadfc8; border-radius:4px; padding:0 5px;}
+
+  .extras{margin-top:12px; background:var(--panel); border:1px dashed var(--line);
+    border-radius:var(--radius); padding:12px 15px; font-size:12.5px; color:var(--text-2);}
+  .extras b{color:var(--text); font-weight:600;}
+  .extras a{color:var(--accent); text-decoration:none;}
+  .extras a:hover{text-decoration:underline;}
+
+  .advice{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 22px; margin-top:8px;}
+  .advice h2{font-size:16px; margin:0 0 12px; font-weight:640;}
+  .advice ul{margin:0; padding-left:0; list-style:none;}
+  .advice li{padding:7px 0 7px 20px; position:relative; color:var(--text-2); font-size:13px;
+    border-bottom:1px solid var(--line);}
+  .advice li:last-child{border-bottom:none;}
+  .advice li::before{content:"→"; position:absolute; left:0; color:var(--accent); font-weight:600;}
+  .advice code{background:var(--accent-soft); color:#1f4fbd; border-radius:4px; padding:1px 5px;
+    font-size:12.5px;}
+  footer{margin-top:34px; color:var(--text-3); font-size:12.5px; text-align:center;}
+  .empty{display:none; text-align:center; color:var(--text-3); padding:50px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>GitHub UI 相关 Skill 清单</h1>
+    <p class="sub">按 <b>官网 / H5 / 微信小程序 / 管理后台 / App</b> 分类，每类按 <b>Star 降序</b>。数据取自 GitHub REST API（<code>gh api</code>），截止 <b>2026-10-12</b>。Star 为仓库级总数，非单个技能文件的安装量。</p>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="toolbar">
+    <div class="tabs" id="tabs"></div>
+    <input class="search" id="search" type="search" placeholder="搜索仓库名 / 关键词…">
+  </div>
+
+  <div id="content"></div>
+
+  <div class="advice">
+    <h2>选型建议</h2>
+    <ul>
+      <li><b>只装一套打底</b>：<code>anthropics/skills</code> 的 <code>frontend-design</code>。官方维护、文档在明处，先让 Agent 立一套能被认出来的审美，再写代码。</li>
+      <li><b>页面能出但一股 AI 味</b>：叠加 <code>Leonxlnx/taste-skill</code>（管方向与禁区）+ <code>pbakaus/impeccable</code>（带审查命令，对着现成页面挑毛病）。</li>
+      <li><b>要色板 / 字体 / 风格库存</b>：<code>nextlevelbuilder/ui-ux-pro-max-skill</code> 一份就能检索。</li>
+      <li><b>管理后台</b>：<code>shadcn-ui/ui</code> 官方 skill + <code>ahpxex/open-dashboard</code> 补布局形态；Vue 系走 <code>jiaiyan/element-plus-skills</code>。</li>
+      <li><b>微信小程序</b>：工程侧优先腾讯云 CloudBase 官方两仓（<code>awesome-miniprogram-skills</code> + <code>mp-skills</code>），设计规范用 <code>Billzhouheart/wechat-miniprogram-designUI</code>。</li>
+      <li><b>App</b>：iOS 首选 <code>twostraws/SwiftUI-Agent-Skill</code>；Android 走 <code>skydoves/compose-performance-skills</code> / <code>aldefy/compose-skill</code>；跨端 Flutter 用 <code>evanca/flutter-ai-rules</code>。</li>
+      <li><b>别按 star 从第 1 个装到最后一个</b> —— 同类只留 1～2 个，否则技能之间会互相打架。</li>
+    </ul>
+  </div>
+
+  <footer>星标每天变动 · 本页数字截至 2026-10-12 · 重新跑一遍 GitHub API 即可刷新</footer>
+</div>
+
+<script>
+const CATS = [
+  {id:'base',   name:'跨端通用底座', note:'官网 / H5 / 小程序 / 后台 / App 都能用，建议先从这里选打底技能。'},
+  {id:'site',   name:'官网', note:'品牌站、落地页、营销页、3D / 滚动叙事型官网。'},
+  {id:'h5',     name:'H5', note:'移动端 Web、活动页、跨端（uni-app）方向。'},
+  {id:'mp',     name:'微信小程序', note:'小程序工程、设计规范、支付 / CloudBase 接入。'},
+  {id:'admin',  name:'管理后台', note:'B 端中后台、数据看板、SaaS Console。'},
+  {id:'app',    name:'App', note:'iOS / SwiftUI、Android / Compose、Flutter、React Native 与跨端设计。'}
+];
+
+const EXTRAS = {
+  h5:'<b>配套资源（非 Skill）</b>：<a href="https://github.com/dcloudio/uni-app" target="_blank">dcloudio/uni-app</a> 41,615 · <a href="https://github.com/MrXujiang/h5-Dooring" target="_blank">MrXujiang/h5-Dooring</a> 9,999（H5 低代码搭页）',
+  mp:'<b>配套资源（非 Skill）</b>：<a href="https://github.com/justjavac/wechat-miniapp-radar" target="_blank">justjavac/wechat-miniapp-radar</a> 51,187（选型 / 趋势诊断工具） · <a href="https://github.com/youzan/vant-weapp" target="_blank">vant-weapp</a> 18,462 · <a href="https://github.com/wux-weapp/wux-weapp" target="_blank">wux-weapp</a> 5,036 · <a href="https://github.com/Tencent/westore" target="_blank">westore</a> 4,283 · <a href="https://github.com/logamee/lin-ui" target="_blank">lin-ui</a> 4,141 · <a href="https://github.com/Moonofweisheng/wot-design-uni" target="_blank">wot-design-uni</a> 2,299',
+  admin:'<b>配套资源（非 Skill）</b>：<a href="https://github.com/PanJiaChen/vue-element-admin" target="_blank">vue-element-admin</a> ~62.2k · <a href="https://github.com/ColorlibHQ/AdminLTE" target="_blank">AdminLTE</a> ~36.8k · <a href="https://github.com/ant-design/ant-design-pro" target="_blank">ant-design-pro</a> ~27.2k · <a href="https://github.com/akveo/ngx-admin" target="_blank">ngx-admin</a> ~21.7k'
+};
+
+const DATA = [
+  // ---- 跨端通用底座 ----
+  {c:'base', r:'anthropics/skills', s:180655, d:'2026-10-09', t:'Anthropic 官方 Agent Skills 仓。含 frontend-design：先定审美方向、排版与信息层级，避免"默认 AI 站"观感，是绝大多数 UI Skill 的基座。'},
+  {c:'base', r:'nextlevelbuilder/ui-ux-pro-max-skill', s:135038, d:'2026-10-12', t:'UI/UX 设计智能库：风格、配色、字体搭配、产品类型、UX 准则、图表类型，覆盖 22 种技术栈（React / Vue / Svelte / Astro / SwiftUI / RN / Flutter / Tailwind / shadcn 等）。'},
+  {c:'base', r:'shadcn-ui/ui', s:125403, d:'2026-10-12', t:'组件库本体 + 官方 shadcn skill：增删组件、样式、组合、读取 components.json 上下文。Web 与中后台的事实标准底座。'},
+  {c:'base', r:'addyosmani/agent-skills', s:105328, d:'2026-10-10', t:'生产级交付导向：可访问性、质量门禁、上线前检查，偏"能上线的界面"而非好看的效果图。'},
+  {c:'base', r:'nexu-io/open-design', s:100687, d:'2026-10-12', t:'开源版 Claude Design 替代：原型、落地页、管理后台、幻灯片、图片 / 视频，输出真实 HTML / PDF / PPTX / MP4。'},
+  {c:'base', r:'Leonxlnx/taste-skill', s:94966, d:'2026-10-11', t:'反 AI 味审美技能包：minimalist-ui、industrial-brutalist-ui、high-end-visual-design、redesign-existing-projects 等子技能。'},
+  {c:'base', r:'pbakaus/impeccable', s:80110, d:'2026-10-12', t:'界面诊断与打磨语言：UX 评审、视觉层级、信息架构、认知负荷、无障碍、响应式、动效、设计令牌。'},
+  {c:'base', r:'emilkowalski/skills', s:45573, d:'2026-10-11', t:'设计师 / 工程师技能集：动效、交互质感、产品级界面细节打磨。'},
+  {c:'base', r:'wshobson/agents', s:40453, d:'2026-10-12', t:'多宿主 agent / 插件市场，含大量前端与 UI 相关子代理与技能。'},
+  {c:'base', r:'VoltAgent/awesome-agent-skills', s:35558, d:'2026-10-12', t:'1000+ agent skills 精选索引，UI / 设计分组是找库的重要入口。'},
+  {c:'base', r:'vercel-labs/agent-skills', s:32274, d:'2026-08-28', t:'Vercel 官方：React / Next.js 性能规则、Web Interface Guidelines 审查、组件组合模式。'},
+  {c:'base', r:'greensock/gsap-skills', s:16244, d:'2026-07-29', t:'GSAP 官方动画技能：时间线、缓动、插件用法、滚动动效。'},
+  {c:'base', r:'ibelick/ui-skills', s:9633, d:'2026-10-11', t:'面向 Design Engineer 的 UI 技能集：交互细节与组件质感。'},
+  {c:'base', r:'jakubkrehel/skills', s:7832, d:'2026-10-11', t:'界面打磨合集：动效、无障碍、产品文案，串联成总审查流程。'},
+  {c:'base', r:'bergside/awesome-design-skills', s:3136, d:'2026-06-28', t:'67 份 DESIGN.md / SKILL.md 索引，含 dashboard、landing 等场景分类。'},
+  {c:'base', r:'bergside/design-md-chrome', s:2990, d:'2026-05-25', t:'浏览器插件：从任意网站抽取样式并生成 DESIGN.md / SKILL.md，做设计基线复刻很实用。'},
+  {c:'base', r:'plugin87/ux-ui-agent-skills', s:1584, d:'2026-10-10', t:'DTCG 设计令牌 + 52 组件 + WCAG 2.2 AA/AAA + 138 套设计系统。'},
+
+  // ---- 官网 ----
+  {c:'site', r:'coreyhaines31/marketingskills', s:54301, d:'2026-10-08', t:'营销技能集：CRO、文案、SEO、分析、增长工程；落地页转化结构这块最对口。'},
+  {c:'site', r:'oso95/scroll-world', s:10034, d:'2026-07-29', t:'把品牌做成可滚动"穿越世界"的 3D 官网。'},
+  {c:'site', r:'nexu-io/html-anything', s:9093, d:'2026-09-15', t:'Agentic HTML 编辑器：75 skills × 9 输出形态（杂志 / 海报 / 原型 / 数据报告等），一键出 HTML / PNG，可直发微信、X、知乎。'},
+  {c:'site', r:'Affitor/affiliate-skills', s:707, d:'2026-09-15', t:'50 个联盟营销技能：内容选题、落地页、转化素材。'},
+  {c:'site', r:'AIwithhassan/lets-scroll', s:130, d:'2026-08-15', t:'滚动擦除式"飞越世界"落地页，AI 生成场景 + 相机运镜。'},
+  {c:'site', r:'musoyangrigor/scroll-video-website-skill', s:55, d:'2026-09-04', t:'把视频转成滚动控制的 canvas 官网。'},
+  {c:'site', r:'braxtonROSE4/clone-any-website', s:54, d:'2026-08-03', t:'像素级复刻任意网站（改版时先取基线很好用）。'},
+  {c:'site', r:'Carlos-Dominguez-faber/forja-landing', s:30, d:'2026-04-17', t:'电影级落地页：Seedance 视频素材 + 反 AI 味评审。'},
+  {c:'site', r:'tsogjavklann/awwwards-3d', s:26, d:'2026-05-08', t:'Awwwards 风格滚动 3D 站（Three.js r170 + GSAP + Lenis）。'},
+  {c:'site', r:'zyliu0/3d-frontend', s:17, d:'2026-03-03', t:'滚动驱动的 3D 官网。'},
+  {c:'site', r:'YuanASI/landing-page-doctor', s:13, d:'2026-03-19', t:'落地页首屏转化诊断，10 项打分。'},
+  {c:'site', r:'Zooeyii/ship-page-skill', s:11, d:'2026-03-08', t:'零依赖、单 HTML 文件的交互式落地页。'},
+  {c:'site', r:'XIEXU0706/Web-Design-Skill', s:5, d:'2026-08-28', t:'高质感网页 / UI 核心 skill，横跨落地页、后台、详情页、H5 / 小程序 / App。'},
+  {c:'site', r:'ChuluuMGL/business-website-skill', s:1, d:'2026-07-10', t:'SEO/GEO 友好的企业 / 品牌 / B2B 官网与提案级站点。'},
+
+  // ---- H5 ----
+  {c:'h5', r:'o2team/H5Skills', s:827, d:'2017-07-11', old:true, t:'移动端开发技巧集合（H5 兼容、适配、性能）。内容较老，作参考而非直接套用。'},
+  {c:'h5', r:'undsky/doudou-ai-coding', s:208, d:'2026-09-17', t:'覆盖后端、Web 前端、移动端 H5、App、小程序的全栈 AI 编码技能，面向个人与中小企业。'},
+  {c:'h5', r:'mobbin/skills', s:33, d:'2026-10-12', t:'Mobbin 官方技能：用真实 App / H5 UI 库做检索式设计参考。'},
+  {c:'h5', r:'enze00/uniapp-frontend-skills', s:17, d:'2026-01-18', t:'uni-app 跨端前端（Vue 3 + TypeScript）综合技能。'},
+  {c:'h5', r:'hxx2001/screenshot_to_code_agent-skill', s:6, d:'2026-09-14', t:'网页 / 移动端 H5 截图还原为可编辑前端代码。'},
+  {c:'h5', r:'SJSIAD/uni-app-expert', s:2, d:'2026-08-11', t:'uni-app 全端专家：多端兼容、包体积、性能、审核红线。'},
+  {c:'h5', r:'caiqianha/vue-skills', s:1, d:'2026-10-12', t:'Vue 3 + Element Plus 后台、微信小程序、uni-app 的技能包。'},
+  {c:'h5', r:'linjiashu/luxury-hotel-ui', s:1, d:'2026-05-31', t:'深色奢华风 C 端 UI，适用于微信小程序 / H5 移动端。'},
+
+  // ---- 微信小程序 ----
+  {c:'mp', r:'NocodeMrLi/mini-program-engineering-skill-suite', s:88, d:'2026-10-11', t:'证据优先的小程序工程技能套件：开发、调试、验收全链路。'},
+  {c:'mp', r:'niuhuoshan/launch-wechat-miniprogram', s:76, d:'2026-08-11', t:'新手向全流程：需求确认 → 原生 UI 与高保真原型 → AppID / 备案 / 测试 → 体验版 → 提审发布。'},
+  {c:'mp', r:'TencentCloudBase/awesome-miniprogram-skills', s:44, d:'2026-06-18', t:'腾讯云 CloudBase 官方示例集合：待办 → 数据存储 → 支付 → AI 调用，开箱即用。'},
+  {c:'mp', r:'Sun-sunshine06/miniprogram-skills', s:27, d:'2026-07-20', t:'可复用 Codex / Claude Code 技能：小程序开发、DevTools 诊断、脚手架。'},
+  {c:'mp', r:'larkwins/wechat-miniprogram-skills', s:24, d:'2026-03-31', t:'小程序开发指导、性能优化与最佳实践技能包。'},
+  {c:'mp', r:'beeyang0/miniprogram-VirtualPayment', s:22, d:'2026-04-03', t:'微信小程序虚拟支付接入技能（含审核要点）。'},
+  {c:'mp', r:'asdyych/wechat-miniprogram-skill', s:16, d:'2026-02-14', t:'Claude Code 用的小程序开发技能。'},
+  {c:'mp', r:'TencentCloudBase/mp-skills', s:9, d:'2026-06-22', t:'官方 CLI（npx mp-skills）：快速创建 AI 小程序 / 把存量小程序改造成 AI 开发模式，内置评测校验。'},
+  {c:'mp', r:'Gourdbaby/wechat-miniprogram-skill', s:9, d:'2026-01-23', t:'原生 JS 小程序专家技能。'},
+  {c:'mp', r:'Billzhouheart/wechat-miniprogram-designUI', s:6, d:'2026-05-22', t:'官方设计规范：颜色体系、暗黑模式、组件规范、审核红线、WeUI 标准。'},
+  {c:'mp', r:'jojowang521/wechat-miniprogram-design-skill', s:3, d:'2026-08-27', t:'设计规范技能：UI 组件、尺寸、安全区、交互与审核合规。'},
+  {c:'mp', r:'karlgao616-cpu/wechat-miniprogram-cloudbase-skill', s:0, d:'2026-08-24', t:'小程序 + 腾讯云 CloudBase 通用技能。'},
+  {c:'mp', r:'ielcharme/wechat-miniprogram-skill', s:0, d:'2026-08-30', t:'商用实战手册：云开发、微信支付 API v3 直连、平台审核合规、踩坑速查。'},
+
+  // ---- 管理后台 ----
+  {c:'admin', r:'data-goblin/power-bi-agentic-development', s:1037, d:'2026-10-11', t:'Power BI AI 技能与代理插件市场，面向数据看板 / BI 场景。'},
+  {c:'admin', r:'coffeefuelbump/csv-data-summarizer-claude-skill', s:468, d:'2025-10-16', t:'CSV 自动分析：摘要统计、异常检测、可视化建议（后台数据页常用）。'},
+  {c:'admin', r:'ahpxex/open-dashboard', s:146, d:'2026-06-29', t:'36 种可直接复制的管理后台 UI 形态目录，由 agent 安装并组合成真实后台。'},
+  {c:'admin', r:'myunwang/ppt-report-skills', s:81, d:'2026-06-03', t:'网页报告 / 看板：ECharts 图表更丰富，一页一文件便于维护。'},
+  {c:'admin', r:'jiaiyan/element-plus-skills', s:26, d:'2026-03-13', t:'Element Plus 组件库技能，供 AI 正确理解与使用（Vue 系后台）。'},
+  {c:'admin', r:'Aiminnotes/UIUX-Demo-Design', s:12, d:'2026-06-12', t:'面向企业级 AI SaaS、B 端后台、Agent 平台、CRM、业财税、数据运营的 UI/UX 设计规范。'},
+  {c:'admin', r:'Owais232/Admin-Panel-Skill-LLM-Models', s:6, d:'2026-07-07', t:'从调研到设计、构建、部署，为任意应用搭管理后台与看板。'},
+  {c:'admin', r:'shinwood/awesome-dashboard-skill', s:4, d:'2026-09-01', t:'把表格 / 主题 / 实时数据变成单文件高密度交互 HTML 看板。'},
+  {c:'admin', r:'taleilon/Ayla-Saas-Admin-UI-UX-Pro', s:2, d:'2026-05-25', t:'跨 agent 的像素级 SaaS 管理后台生成技能。'},
+  {c:'admin', r:'keskinonur/tabler-ui-skill', s:1, d:'2026-08-12', t:'Tabler（Bootstrap 5）管理后台 / 看板 UI 技能。'},
+  {c:'admin', r:'peihongjun688/wcs-plugins', s:0, d:'2026-09-05', t:'多皮肤中后台脚手架插件市场。'},
+
+  // ---- App ----
+  {c:'app', r:'ZSeven-W/openpencil', s:6127, d:'2026-10-12', t:'开源 AI 原生矢量设计工具，支持并发 Agent 协作出图。'},
+  {c:'app', r:'twostraws/SwiftUI-Agent-Skill', s:5798, d:'2026-10-07', t:'SwiftUI 技能（Paul Hudson 出品），iOS 界面首选。'},
+  {c:'app', r:'expo/skills', s:2777, d:'2026-10-07', t:'Expo 官方：Expo / EAS 项目与原生 UI 构建技能。'},
+  {c:'app', r:'Appllama/appllama-skills', s:2549, d:'2026-09-06', t:'把畅销 App 的成熟模式转成原生质感界面与设计系统。'},
+  {c:'app', r:'hamen/material-3-skill', s:1472, d:'2026-07-15', t:'Material Design 3：30+ 组件、设计令牌、主题、响应式、合规审查。'},
+  {c:'app', r:'dickwu/apple-design-skill', s:1210, d:'2026-10-02', t:'基于 Apple HIG 的跨端 UI/UX 评审，通吃 Flutter / Tauri / Electron / React Native。'},
+  {c:'app', r:'maxrave-dev/kotlin-footguns', s:1176, d:'2026-09-25', t:'Kotlin / Compose Multiplatform / 桌面 JVM 的踩坑地图。'},
+  {c:'app', r:'new-silvermoon/awesome-android-agent-skills', s:972, d:'2026-07-27', t:'现代 Android 技能合集。'},
+  {c:'app', r:'evanca/flutter-ai-rules', s:651, d:'2026-10-10', t:'Flutter 技能与规则集。'},
+  {c:'app', r:'aldefy/compose-skill', s:596, d:'2026-07-23', t:'Jetpack Compose 技能，附 androidx 源码级配方。'},
+  {c:'app', r:'skydoves/compose-performance-skills', s:516, d:'2026-06-16', t:'Jetpack Compose 性能专题技能库。'},
+  {c:'app', r:'AThevon/genjutsu', s:462, d:'2026-10-05', t:'创意编码技能：动效、微交互、设计系统。'},
+  {c:'app', r:'ceorkm/mobile-app-ui-design', s:417, d:'2026-06-25', t:'专业移动 App UI/UX 设计技能。'},
+  {c:'app', r:'ai-dashboad/flutter-skill', s:388, d:'2026-09-01', t:'Flutter 端到端测试技能（253 个 MCP 工具，覆盖 10 平台）。'},
+  {c:'app', r:'Meet-Miyani/compose-skill', s:302, d:'2026-10-11', t:'Compose Kit：Jetpack Compose 与 Compose Multiplatform 技能。'},
+  {c:'app', r:'Wholiver/swiftui-design-skill', s:207, d:'2026-05-01', t:'SwiftUI 前端设计六条铁律 + 设计方向咨询。'},
+  {c:'app', r:'yzfly/awesome-design-html', s:159, d:'2026-06-14', t:'115 套品牌主题 HTML 设计（93 Web + 22 iOS，含 20 套中国品牌）。'},
+  {c:'app', r:'Drjacky/claude-android-ninja', s:124, d:'2026-09-29', t:'Android + Kotlin + Compose：模块化架构、导航、测试。'},
+  {c:'app', r:'ameyalambat128/swiftui-skills', s:121, d:'2026-07-06', t:'基于 Apple Xcode AI 文档整理的 SwiftUI 技能。'},
+  {c:'app', r:'awesome-skills/mobile-app-design', s:79, d:'2026-02-05', t:'移动 App UI/UX 综合技能：iOS、Android、无障碍、React Native。'},
+  {c:'app', r:'ayush016/android-lead-agent-skills', s:68, d:'2026-07-01', t:'面向 Android 技术负责人的技能与提示词。'},
+  {c:'app', r:'haider-nawaz/liquid-glass-skill', s:65, d:'2026-02-14', t:'Apple Liquid Glass 设计体系（iOS 26/27）落地与迁移。'}
+];
+
+let activeCat = 'all';
+let q = '';
+
+const fmt = n => n.toLocaleString('en-US');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(){
+  const tabs = document.getElementById('tabs');
+  const cats = [{id:'all', name:'全部'}].concat(CATS);
+  tabs.innerHTML = cats.map(c=>{
+    const n = c.id==='all' ? DATA.length : DATA.filter(x=>x.c===c.id).length;
+    return `<button class="tab ${activeCat===c.id?'on':''}" data-cat="${c.id}">${c.name}<span class="n">${n}</span></button>`;
+  }).join('');
+  tabs.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat; render();});
+
+  const stats = document.getElementById('stats');
+  const totalStars = DATA.reduce((a,b)=>a+b.s,0);
+  stats.innerHTML = [
+    ['收录仓库', DATA.length + ' 个'],
+    ['覆盖分类', CATS.length + ' 类'],
+    ['Star 合计', fmt(totalStars)],
+    ['数据截止', '2026-10-12']
+  ].map(([k,v])=>`<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const list = activeCat==='all' ? CATS : CATS.filter(c=>c.id===activeCat);
+  let hasAny = false;
+
+  list.forEach(cat=>{
+    let rows = DATA.filter(x=>x.c===cat.id);
+    if(q){
+      const k = q.toLowerCase();
+      rows = rows.filter(x => x.r.toLowerCase().includes(k) || x.t.toLowerCase().includes(k));
+    }
+    rows.sort((a,b)=>b.s-a.s);
+    if(!rows.length) return;
+    hasAny = true;
+
+    const sec = document.createElement('section');
+    sec.className = 'cat';
+    sec.innerHTML = `
+      <div class="cat-head"><h2>${cat.name}</h2><span class="cnt">${rows.length} 个 · 按 Star 降序</span></div>
+      <p class="cat-note">${cat.note}</p>
+      <table>
+        <thead><tr>
+          <th>#</th><th>仓库</th><th>Star</th><th>最近更新</th><th>说明</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map((x,i)=>{
+            const [owner,name] = x.r.split('/');
+            return `<tr>
+              <td class="rank">${i+1}</td>
+              <td><a class="repo" href="https://github.com/${x.r}" target="_blank" rel="noopener"><span class="owner">${esc(owner)}/</span>${esc(name)}</a></td>
+              <td class="stars"><span class="ic">★</span>${fmt(x.s)}</td>
+              <td class="date">${x.d}</td>
+              <td class="desc">${esc(x.t)}${x.old?'<span class="old">内容偏旧</span>':''}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      ${EXTRAS[cat.id] ? `<div class="extras">${EXTRAS[cat.id]}</div>` : ''}
+    `;
+    content.appendChild(sec);
+  });
+
+  if(!hasAny) content.innerHTML = '<div class="empty">没有匹配的仓库，换个关键词试试。</div>';
+}
+
+document.getElementById('search').addEventListener('input', e=>{ q = e.target.value.trim(); render(); });
+render();
+</script>
+</body>
+</html>
