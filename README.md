@@ -1,16 +1,32 @@
-# GitHub UI 相关 Skill 清单（按分类 · 按 Star 排序）
+# UISkills
 
-> 数据来源：GitHub REST API（`gh api`），抓取时间 **2026-10-12**。
-> "Skill" 指以 `SKILL.md` / Agent Skill 形态分发的仓库；每类末尾另附「配套资源」，列出该场景下常用的组件库 / 脚手架（非 Skill 形态，仅作搭配参考）。
-> Star 为仓库级总数（不是单个技能文件的安装量），会持续变动。
+GitHub 上 **UI 相关的 Agent Skill** 收集与分类。
+
+> - **口径**：这里收的是以 `SKILL.md` / Agent Skill 形态分发的仓库，**不是**纯组件库。每个分类末尾单列「配套资源」，放该场景常用的组件库与脚手架（非 Skill 形态，仅供搭配）。
+> - **数据来源**：GitHub REST API（`gh api`），抓取时间 **2026-10-12**。
+> - **排序**：每个分类内按 **Star 降序**。
+> - **注意**：Star 是**仓库级总数**，不是单个技能文件的安装量；数字每天在变，如需最新值请重跑 GitHub API。
+
+**收录 85 个仓库 / 6 个分类**
+
+| 分类 | 数量 | 本类 Top 1 |
+|------|------|-----------|
+| [0. 跨端通用设计底座](#0-跨端通用设计底座) | 17 | `anthropics/skills` ★ 180,655 |
+| [1. 官网 / 品牌站 / 落地页](#1-官网--品牌站--落地页) | 14 | `coreyhaines31/marketingskills` ★ 54,301 |
+| [2. H5 / 移动端 Web](#2-h5--移动端-web) | 8 | `o2team/H5Skills` ★ 827 |
+| [3. 微信小程序](#3-微信小程序) | 13 | `NocodeMrLi/mini-program-engineering-skill-suite` ★ 88 |
+| [4. 管理后台 / B 端中后台](#4-管理后台--b-端中后台) | 11 | `data-goblin/power-bi-agentic-development` ★ 1,037 |
+| [5. App（iOS / Android / 跨端）](#5-appios--android--跨端) | 22 | `ZSeven-W/openpencil` ★ 6,127 |
 
 ---
 
-## 0. 跨端通用设计底座（官网 / H5 / 小程序 / 后台 / App 都能用）
+## 0. 跨端通用设计底座
+
+> 官网 / H5 / 小程序 / 管理后台 / App **都能用**，建议先从这里选打底技能。
 
 | # | 仓库 | Star | 最近更新 | 说明 |
 |---|------|------|----------|------|
-| 1 | [anthropics/skills](https://github.com/anthropics/skills) | 180,655 | 2026-10-09 | Anthropic 官方 Agent Skills 仓。含 `frontend-design`：先定审美方向、排版与信息层级，避免"默认 AI 站"观感，是绝大多数 UI Skill 的基座  |
+| 1 | [anthropics/skills](https://github.com/anthropics/skills) | 180,655 | 2026-10-09 | Anthropic 官方 Agent Skills 仓。含 `frontend-design`：先定审美方向、排版与信息层级，避免"默认 AI 站"观感，是绝大多数 UI Skill 的基座 |
 | 2 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 135,038 | 2026-10-12 | UI/UX 设计智能库：风格、配色、字体搭配、产品类型、UX 准则、图表类型，覆盖 22 种技术栈（React / Vue / Svelte / Astro / SwiftUI / RN / Flutter / Tailwind / shadcn 等） |
 | 3 | [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | 125,403 | 2026-10-12 | 组件库本体 + 官方 `shadcn` skill：增删组件、样式、组合、读取 `components.json` 上下文。Web 与中后台的事实标准底座 |
 | 4 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | 105,328 | 2026-10-10 | 生产级交付导向：可访问性、质量门禁、上线前检查，偏"能上线的界面"而非好看的效果图 |
@@ -19,7 +35,7 @@
 | 7 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 80,110 | 2026-10-12 | 界面诊断与打磨语言：UX 评审、视觉层级、信息架构、认知负荷、无障碍、响应式、动效、设计令牌 |
 | 8 | [emilkowalski/skills](https://github.com/emilkowalski/skills) | 45,573 | 2026-10-11 | 设计师 / 工程师技能集：动效、交互质感、产品级界面细节打磨 |
 | 9 | [wshobson/agents](https://github.com/wshobson/agents) | 40,453 | 2026-10-12 | 多宿主 agent / 插件市场，含大量前端与 UI 相关子代理与技能 |
-| 10 | [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) | 35,558 | 2026-10-12 | 1000+ agent skills 精选索引，UI/设计分组是找库的重要入口 |
+| 10 | [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) | 35,558 | 2026-10-12 | 1000+ agent skills 精选索引，UI / 设计分组是找库的重要入口 |
 | 11 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 32,274 | 2026-08-28 | Vercel 官方：React / Next.js 性能规则、Web Interface Guidelines 审查、组件组合模式 |
 | 12 | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | 16,244 | 2026-07-29 | GSAP 官方动画技能：时间线、缓动、插件用法、滚动动效 |
 | 13 | [ibelick/ui-skills](https://github.com/ibelick/ui-skills) | 9,633 | 2026-10-11 | 面向 Design Engineer 的 UI 技能集：交互细节与组件质感 |
@@ -34,7 +50,7 @@
 
 | # | 仓库 | Star | 最近更新 | 说明 |
 |---|------|------|----------|------|
-| 1 | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | 54,301 | 2026-10-08 | 营销技能集：CRO、文案、SEO、分析、增长工程；落地页转化结构这一块最对口 |
+| 1 | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | 54,301 | 2026-10-08 | 营销技能集：CRO、文案、SEO、分析、增长工程；落地页转化结构这块最对口 |
 | 2 | [oso95/scroll-world](https://github.com/oso95/scroll-world) | 10,034 | 2026-07-29 | 把品牌做成可滚动"穿越世界"的 3D 官网 |
 | 3 | [nexu-io/html-anything](https://github.com/nexu-io/html-anything) | 9,093 | 2026-09-15 | Agentic HTML 编辑器：75 skills × 9 输出形态（杂志 / 海报 / 原型 / 数据报告等），一键出 HTML / PNG，可直发微信、X、知乎 |
 | 4 | [Affitor/affiliate-skills](https://github.com/Affitor/affiliate-skills) | 707 | 2026-09-15 | 50 个联盟营销技能：内容选题、落地页、转化素材 |
@@ -74,7 +90,7 @@
 |---|------|------|----------|------|
 | 1 | [NocodeMrLi/mini-program-engineering-skill-suite](https://github.com/NocodeMrLi/mini-program-engineering-skill-suite) | 88 | 2026-10-11 | 证据优先的小程序工程技能套件：开发、调试、验收全链路 |
 | 2 | [niuhuoshan/launch-wechat-miniprogram](https://github.com/niuhuoshan/launch-wechat-miniprogram) | 76 | 2026-08-11 | 新手向全流程：需求确认 → 原生 UI 与高保真原型 → AppID / 备案 / 测试 → 体验版 → 提审发布 |
-| 3 | [TencentCloudBase/awesome-miniprogram-skills](https://github.com/TencentCloudBase/awesome-miniprogram-skills) | 44 | 2026-06-18 | 官方（腾讯云 CloudBase）示例集合：待办 → 数据存储 → 支付 → AI 调用，开箱即用 |
+| 3 | [TencentCloudBase/awesome-miniprogram-skills](https://github.com/TencentCloudBase/awesome-miniprogram-skills) | 44 | 2026-06-18 | 腾讯云 CloudBase 官方示例集合：待办 → 数据存储 → 支付 → AI 调用，开箱即用 |
 | 4 | [Sun-sunshine06/miniprogram-skills](https://github.com/Sun-sunshine06/miniprogram-skills) | 27 | 2026-07-20 | 可复用 Codex / Claude Code 技能：小程序开发、DevTools 诊断、脚手架 |
 | 5 | [larkwins/wechat-miniprogram-skills](https://github.com/larkwins/wechat-miniprogram-skills) | 24 | 2026-03-31 | 小程序开发指导、性能优化与最佳实践技能包 |
 | 6 | [beeyang0/miniprogram-VirtualPayment](https://github.com/beeyang0/miniprogram-VirtualPayment) | 22 | 2026-04-03 | 微信小程序虚拟支付接入技能（含审核要点） |
@@ -106,7 +122,7 @@
 | 10 | [keskinonur/tabler-ui-skill](https://github.com/keskinonur/tabler-ui-skill) | 1 | 2026-08-12 | Tabler（Bootstrap 5）管理后台 / 看板 UI 技能 |
 | 11 | [peihongjun688/wcs-plugins](https://github.com/peihongjun688/wcs-plugins) | 0 | 2026-09-05 | 多皮肤中后台脚手架插件市场 |
 
-**配套资源（非 Skill）**：[vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ~62.2k · [AdminLTE](https://github.com/ColorlibHQ/AdminLTE) ~36.8k · [ant-design-pro](https://github.com/ant-design/ant-design-pro) ~27.2k · [ngx-admin](https://github.com/akveo/ngx-admin) ~21.7k
+**配套资源（非 Skill）**：[PanJiaChen/vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ~62.2k · [ColorlibHQ/AdminLTE](https://github.com/ColorlibHQ/AdminLTE) ~36.8k · [ant-design/ant-design-pro](https://github.com/ant-design/ant-design-pro) ~27.2k · [akveo/ngx-admin](https://github.com/akveo/ngx-admin) ~21.7k
 
 ---
 
@@ -141,12 +157,20 @@
 
 ## 选型建议
 
-- **只装一套打底**：`anthropics/skills` 的 `frontend-design`。官方维护、文档齐全，先让 Agent 立一套能被认出来的审美，再写代码。
+- **只装一套打底**：`anthropics/skills` 的 `frontend-design`。官方维护、文档在明处，先让 Agent 立一套能被认出来的审美，再写代码。
 - **页面能出但一股 AI 味**：叠加 `Leonxlnx/taste-skill`（管方向与禁区）+ `pbakaus/impeccable`（带审查命令，对着现成页面挑毛病）。
-- **要色板 / 字体 / 风格库存**：`nextlevelbuilder/ui-ux-pro-max-skill` 一份搞定检索。
-- **管理后台**：`shadcn-ui/ui`（官方 skill）+ `ahpxex/open-dashboard` 补布局形态；Vue 系走 `jiaiyan/element-plus-skills`。
-- **微信小程序**：工程侧优先腾讯云 CloudBase 官方两个仓（`awesome-miniprogram-skills` + `mp-skills`），设计规范用 `Billzhouheart/wechat-miniprogram-designUI`。
-- **App**：iOS 首选 `twostraws/SwiftUI-Agent-Skill`，Android 走 `skydoves/compose-performance-skills` / `aldefy/compose-skill`，跨端 Flutter 用 `evanca/flutter-ai-rules`。
-- **别按 star 从第 1 个装到最后一个**——同类只留 1～2 个，否则技能之间会互相打架。
+- **要色板 / 字体 / 风格库存**：`nextlevelbuilder/ui-ux-pro-max-skill` 一份就能检索。
+- **管理后台**：`shadcn-ui/ui` 官方 skill + `ahpxex/open-dashboard` 补布局形态；Vue 系走 `jiaiyan/element-plus-skills`。
+- **微信小程序**：工程侧优先腾讯云 CloudBase 官方两仓（`awesome-miniprogram-skills` + `mp-skills`），设计规范用 `Billzhouheart/wechat-miniprogram-designUI`。
+- **App**：iOS 首选 `twostraws/SwiftUI-Agent-Skill`；Android 走 `skydoves/compose-performance-skills` / `aldefy/compose-skill`；跨端 Flutter 用 `evanca/flutter-ai-rules`。
+- **别按 star 从第 1 个装到最后一个** —— 同类只留 1～2 个，否则技能之间会互相打架。
 
-> 图片 / 星标每天在变，本清单的数字截至 2026-10-12，如需最新值可重新跑一遍 GitHub API。
+---
+
+## 几点观察
+
+1. **通用底座与垂类的差距是断层级的。** Top 7 全部是跨端通吃的（`anthropics/skills` 180k、`ui-ux-pro-max` 135k、`shadcn-ui/ui` 125k、`addyosmani/agent-skills` 105k、`open-design` 100k、`taste-skill` 95k、`impeccable` 80k）；而官网 / H5 / 小程序 / 管理后台四个中文场景的专项 skill，本类最高都不破千。这几类目前实质上是「通用底座 + 少量垂类补丁」。
+2. **小程序是官方在带。** 腾讯云 CloudBase 出的两个仓星不高，但是目前唯一带官方口径的来源；设计规范那块，`Billzhouheart/wechat-miniprogram-designUI`（官方设计规范 + 审核红线）比同类高星项目更实用。
+3. **管理后台缺"正统解法"。** 真正的后台专项 skill 很散（`ahpxex/open-dashboard` 146★ 已算本类头部），实践中更靠 `shadcn-ui/ui` 官方 skill 打底，Vue 系配 Element Plus skill。
+4. **第三方榜单的星标不可信。** 抓取过程中对比了 skillselion、claudeskills.info 等站点，同一仓库的数字与 GitHub 实测差异很大（例：某 skill 榜标 41.4k，实测 94,966）。**一律以 GitHub API 为准。**
+5. **`o2team/H5Skills` 有 827★ 排 H5 第一，但最后更新停在 2017 年**，只建议当参考，别直接套用。
